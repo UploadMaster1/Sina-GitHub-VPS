@@ -1,12 +1,27 @@
-name: GitHub VPS
-
+name: GitHub VPS ARM64
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm64
     steps:
+      - name: Verify ARM64 architecture
+        run: |
+          echo "Architecture: $(uname -m)"
+          echo "CPU info:"
+          lscpu | grep -E 'Architecture|Model name'
+          
+      - name: Check KVM support
+        run: |
+          echo "Checking for KVM device..."
+          if [ -e /dev/kvm ]; then
+            echo "✓ /dev/kvm exists"
+            ls -la /dev/kvm
+          else
+            echo "✗ /dev/kvm not found"
+          fi
+          
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         with:
